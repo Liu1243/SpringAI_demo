@@ -8,6 +8,11 @@ spring:
         model: deepseek-r1:14b
         options:
           temperature: 0.7
+  datasource:
+    url: jdbc:mysql://localhost:3307/springai?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
 logging:
   level:
     org.springframework.ai: debug
