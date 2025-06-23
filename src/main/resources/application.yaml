@@ -8,3 +8,7 @@ spring:
         model: deepseek-r1:14b
         options:
           temperature: 0.7
+logging:
+  level:
+    org.springframework.ai: debug
+    com.liu.springai_demo: debug
