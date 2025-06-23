@@ -1,6 +1,6 @@
 package com.liu.springai_demo.memory;
 
-import com.liu.springai_demo.entity.ChatMessage;
+import com.liu.springai_demo.entity.po.ChatMessage;
 import com.liu.springai_demo.mapper.ChatMessageMapper;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.messages.AssistantMessage;

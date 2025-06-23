@@ -1,6 +1,6 @@
 package com.liu.springai_demo.mapper;
 
-import com.liu.springai_demo.entity.ChatMessage;
+import com.liu.springai_demo.entity.po.ChatMessage;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;

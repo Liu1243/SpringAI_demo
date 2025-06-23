@@ -1,6 +1,6 @@
 package com.liu.springai_demo.mapper;
 
-import com.liu.springai_demo.entity.ChatHistory;
+import com.liu.springai_demo.entity.po.ChatHistory;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;

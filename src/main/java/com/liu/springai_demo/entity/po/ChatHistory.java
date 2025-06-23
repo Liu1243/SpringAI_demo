@@ -1,4 +1,4 @@
-package com.liu.springai_demo.entity;
+package com.liu.springai_demo.entity.po;
 
 import lombok.Data;
 

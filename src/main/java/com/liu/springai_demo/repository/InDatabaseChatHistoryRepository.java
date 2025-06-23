@@ -1,6 +1,6 @@
 package com.liu.springai_demo.repository;
 
-import com.liu.springai_demo.entity.ChatHistory;
+import com.liu.springai_demo.entity.po.ChatHistory;
 import com.liu.springai_demo.mapper.ChatHistoryMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;

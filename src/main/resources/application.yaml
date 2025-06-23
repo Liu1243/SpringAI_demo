@@ -8,11 +8,34 @@ spring:
         model: deepseek-r1:14b
         options:
           temperature: 0.7
+    openai:
+      base-url: https://dashscope.aliyuncs.com/compatible-mode
+      api-key: ${OPENAI_API_KEY}
+      chat:
+        options:
+          model: qwen-max-latest
+
   datasource:
     url: jdbc:mysql://localhost:3307/springai?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8
     username: root
     password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      idle-timeout: 30000
+      pool-name: SpringBootHikariCP
+      auto-commit: true
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      validation-timeout: 5000
+      leak-detection-threshold: 0
+  jpa:
+    hibernate:
+      # 移除了已弃用的 use-new-id-generator-mappings 配置
+      ddl-auto: update
+    show-sql: true
+    database-platform: org.hibernate.dialect.MySQL8Dialect
 logging:
   level:
     org.springframework.ai: debug
