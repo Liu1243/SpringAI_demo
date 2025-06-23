@@ -1,5 +1,6 @@
 package com.liu.springai_demo.config;
 
+import com.liu.springai_demo.memory.InSqlChatMemory;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
@@ -26,14 +27,20 @@ public class CommonConfiguration {
                 build();
     }
 
+//    @Bean
+//    public ChatMemory chatMemory() {
+//        // MessageWindowChatMemory默认使用的存储库就是InMemory，默认窗口大小是20
+//        return MessageWindowChatMemory.builder()
+//                // 设置存储在内存中 InMemory
+//                .chatMemoryRepository(new InMemoryChatMemoryRepository())
+//                // 记忆窗口大小 保留最近10条消息
+//                .maxMessages(10)
+//                .build();
+//    }
+
     @Bean
     public ChatMemory chatMemory() {
-        // MessageWindowChatMemory默认使用的存储库就是InMemory，默认窗口大小是20
-        return MessageWindowChatMemory.builder()
-                // 设置存储在内存中 InMemory
-                .chatMemoryRepository(new InMemoryChatMemoryRepository())
-                // 记忆窗口大小 保留最近10条消息
-                .maxMessages(10)
-                .build();
+        // 存储到数据库中
+        return new InSqlChatMemory();
     }
 }
