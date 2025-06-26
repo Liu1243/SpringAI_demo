@@ -6,14 +6,24 @@ import com.liu.springai_demo.tools.ElectiveCourseTools;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
+import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.InMemoryChatMemoryRepository;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
+import org.springframework.ai.embedding.EmbeddingModel;
+import org.springframework.ai.embedding.TokenCountBatchingStrategy;
 import org.springframework.ai.ollama.OllamaChatModel;
 import org.springframework.ai.openai.OpenAiChatModel;
+import org.springframework.ai.openai.OpenAiEmbeddingModel;
+import org.springframework.ai.vectorstore.SearchRequest;
+import org.springframework.ai.vectorstore.SimpleVectorStore;
+import org.springframework.ai.vectorstore.VectorStore;
+import org.springframework.ai.vectorstore.redis.RedisVectorStore;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import redis.clients.jedis.JedisPooled;
 
 /**
  * @author 1
@@ -69,4 +79,41 @@ public class CommonConfiguration {
     public ChatMemory chatMemory() {
         return new InSqlChatMemory(); // 使用项目中存在的 ChatMemory 实现
     }
+
+    @Bean
+    public JedisPooled jedisPooled() {
+        return new JedisPooled("localhost", 63791);
+    }
+
+    /**
+     * 项目中存在 ollama 以及 OpenAi 两种方式，这里 VectorStore 自动装配会报错 找不到 EmbeddingModel 所以这里手动指定 EmbeddingModel
+     * @param jedisPooled
+     * @param embeddingModel
+     * @return
+     */
+    @Bean
+    public VectorStore vectorStore(JedisPooled jedisPooled, @Qualifier("openAiEmbeddingModel") EmbeddingModel embeddingModel) {
+        return RedisVectorStore.builder(jedisPooled, embeddingModel)
+                .indexName("spring_ai_index")                // Optional: defaults to "spring-ai-index"
+                .prefix("doc:")                  // Optional: defaults to "embedding:"
+                .initializeSchema(true)                   // Optional: defaults to false
+                .build();
+    }
+
+    @Bean
+    public ChatClient pdfChatClient(OpenAiChatModel model, ChatMemory chatMemory, VectorStore vectorStore) {
+        return ChatClient
+                .builder(model)
+                .defaultSystem("请根据上下文回答问题，遇到上下文没有的问题，不要随意编造。")
+                .defaultAdvisors(
+                        new SimpleLoggerAdvisor(),
+                        MessageChatMemoryAdvisor.builder(chatMemory).build(),
+                        QuestionAnswerAdvisor.builder(vectorStore)
+                                .searchRequest(SearchRequest.builder().similarityThreshold(0.6d).topK(2).build())
+                                .build()
+                )
+                .build();
+    }
+
+
 }
